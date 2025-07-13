@@ -1,17 +1,16 @@
-// netlify/functions/veri.js
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  connectionString: process.env.NETLIFY_DATABASE_URL, // Netlify ayarlarından okunacak
+  connectionString: process.env.NETLIFY_DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
 exports.handler = async function(event, context) {
   try {
-    const result = await pool.query('SELECT * FROM deneme');
+    const result = await pool.query('SELECT * FROM deneme ORDER BY id ASC LIMIT 1');
     return {
       statusCode: 200,
-      body: JSON.stringify(result.rows)
+      body: JSON.stringify(result.rows[0])
     };
   } catch (err) {
     return {
