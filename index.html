@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NeonDB Verileri</title>
+  <title>Kullanıcı Göster</title>
 </head>
 <body>
-  <h1>Kullanıcı Listesi</h1>
-  <ul id="liste"></ul>
+  <h1>İlk Kullanıcı:</h1>
+  <p id="kullanici">Yükleniyor...</p>
 
   <script>
     fetch('/.netlify/functions/veri')
       .then(res => res.json())
       .then(data => {
-        const liste = document.getElementById('liste');
-        data.forEach(kisi => {
-          const li = document.createElement('li');
-          li.textContent = `${kisi.id}: ${kisi.username}`;
-          liste.appendChild(li);
-        });
+        document.getElementById('kullanici').textContent =
+          `ID: ${data.id}, Kullanıcı Adı: ${data.username}`;
       })
-      .catch(err => console.error('Veri çekme hatası:', err));
+      .catch(err => {
+        document.getElementById('kullanici').textContent = 'Hata: ' + err.message;
+      });
   </script>
 </body>
 </html>
