@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NeonDB Verileri</title>
+</head>
+<body>
+  <h1>Kullanıcı Listesi</h1>
+  <ul id="liste"></ul>
+
+  <script>
+    fetch('/.netlify/functions/veri')
+      .then(res => res.json())
+      .then(data => {
+        const liste = document.getElementById('liste');
+        data.forEach(kisi => {
+          const li = document.createElement('li');
+          li.textContent = `${kisi.id}: ${kisi.isim} (${kisi.skor})`;
+          liste.appendChild(li);
+        });
+      })
+      .catch(err => console.error('Veri çekme hatası:', err));
+  </script>
+</body>
+</html>
