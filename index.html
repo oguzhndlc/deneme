@@ -14,7 +14,7 @@
         const liste = document.getElementById('liste');
         data.forEach(kisi => {
           const li = document.createElement('li');
-          li.textContent = `${kisi.id}: ${kisi.isim} (${kisi.skor})`;
+          li.textContent = `${kisi.id}: ${kisi.username}`;
           liste.appendChild(li);
         });
       })
