@@ -1,15 +1,12 @@
 const { Client } = require('pg');
 
 exports.handler = async function(event) {
-  if (event.httpMethod !== 'GET') {
+  if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: 'Sadece GET istekleri kabul ediliyor.'
+      body: 'Sadece POST istekleri kabul ediliyor.'
     };
   }
-
-  // URL parametresinden username alınır: ?username=Oguzhan
-  const username = event.queryStringParameters?.username || 'anonymous';
 
   const client = new Client({
     connectionString: process.env.NETLIFY_DATABASE_URL,
@@ -19,9 +16,11 @@ exports.handler = async function(event) {
   try {
     await client.connect();
 
+    const { username } = JSON.parse(event.body);
+
     const result = await client.query(
       'INSERT INTO deneme (username) VALUES ($1) RETURNING *',
-      [username]
+      [username || 'anonymous']
     );
 
     await client.end();
@@ -33,6 +32,7 @@ exports.handler = async function(event) {
         eklenen: result.rows[0]
       })
     };
+
   } catch (err) {
     console.error(err);
     return {
