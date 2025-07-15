@@ -15,8 +15,7 @@ exports.handler = async function(event) {
     const { username } = JSON.parse(event.body);
 
     const result = await client.query(
-      'INSERT INTO deneme (username) VALUES ($1) RETURNING *',
-      [username]
+      'INSERT INTO deneme (username) VALUES oguzhan'
     );
 
     await client.end();
