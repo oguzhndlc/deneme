@@ -10,7 +10,7 @@ exports.handler = async function(event, context) {
     const result = await pool.query('SELECT * FROM users ORDER BY id ASC');
     return {
       statusCode: 200,
-      body: JSON.stringify(result.rows[0])
+      body: JSON.stringify(result.rows)
     };
   } catch (err) {
     return {
