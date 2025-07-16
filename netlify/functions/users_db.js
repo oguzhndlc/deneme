@@ -7,15 +7,21 @@ const pool = new Pool({
 
 exports.handler = async function(event, context) {
   try {
-    const result = await pool.query('SELECT * FROM users ORDER BY id ASC');
+    const result = await pool.query('SELECT id, user_name, passwrd FROM users ORDER BY id ASC');
+
     return {
       statusCode: 200,
-      body: JSON.stringify(result.rows)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ users: result.rows })   // Tüm kullanıcılar JSON dizisi olarak
     };
+
   } catch (err) {
+    console.error('Veri tabanı hatası:', err.message);
+
     return {
       statusCode: 500,
-      body: JSON.stringify({ hata: err.message })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Veri tabanına bağlanırken hata oluştu.' })
     };
   }
 };
