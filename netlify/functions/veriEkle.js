@@ -12,30 +12,26 @@ exports.handler = async function(event) {
     };
   }
 
-  let username;
+  let user_name, passwrd;
   try {
     let parsedBody;
 
-    // Gelen body base64 encoded olabilir mi kontrol et
     try {
-      // Base64 decode etmeyi dene
       const decoded = Buffer.from(event.body, 'base64').toString('utf8');
-
-      // Decode edilmiş hali JSON formatındaysa kullan
       parsedBody = JSON.parse(decoded);
       console.log('🔓 Base64 decode edilmiş body:', decoded);
-
     } catch {
-      // Base64 değilse direk JSON parse yap
       parsedBody = JSON.parse(event.body);
       console.log('⚡ Düz JSON body:', event.body);
     }
 
-    username = parsedBody.username;
-    if (!username) {
+    user_name = parsedBody.user_name;
+    passwrd = parsedBody.passwrd;
+
+    if (!user_name || !passwrd) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ hata: 'username eksik' })
+        body: JSON.stringify({ hata: 'user_name ve passwrd alanları zorunludur.' })
       };
     }
 
@@ -56,8 +52,8 @@ exports.handler = async function(event) {
     await client.connect();
 
     const result = await client.query(
-      'INSERT INTO deneme (username) VALUES ($1) RETURNING *',
-      [username]
+      'INSERT INTO users (user_name, passwrd) VALUES ($1, $2) RETURNING *',
+      [user_name, passwrd]
     );
 
     await client.end();
