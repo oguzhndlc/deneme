@@ -63,6 +63,21 @@ exports.handler = async function(event) {
       [user_name, password, name, surname, mail, phone_number]
     );
 
+    await client.query(
+  'INSERT INTO user_settings (user_name, music, sound) VALUES ($1, $2, $3)',
+  [user_name, true, true]
+    );
+
+    await client.query(
+  'INSERT INTO user_skins (user_name,skin_main,skin_one,skin_two,skin_three,skin_four,skin_five) VALUES ($1, $2, $3,$4,$5,$6,$7)',
+  [user_name,1,0,0,0,0,0]
+);
+
+    await client.query(
+  'INSERT INTO user_stats (user_name,level,money,classic_high_score,race_high_score,classic_gameplay,race_gameplay,eat_enemy) VALUES ($1, $2, $3)',
+  [user_name,0,0,0,0,0,0,0]
+);
+
     await client.end();
 
     return {
