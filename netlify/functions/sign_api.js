@@ -14,7 +14,7 @@ exports.handler = async function(event) {
     const bodyDecoded = Buffer.from(event.body, 'base64').toString('utf8');
     const parsedBody = JSON.parse(bodyDecoded || event.body);
 
-    user_name = parsedBody.username;
+    user_name = parsedBody.user_name;
     password = parsedBody.password;
     name = parsedBody.name;
     surname = parsedBody.surname;
