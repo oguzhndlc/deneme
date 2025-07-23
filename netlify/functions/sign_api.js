@@ -43,6 +43,21 @@ exports.handler = async function(event) {
   try {
     await client.connect();
 
+    // Kullanıcı adı kontrolü:
+    const kontrolResult = await client.query(
+      'SELECT user_name FROM accounts WHERE user_name = $1',
+      [user_name]
+    );
+
+    if (kontrolResult.rows.length > 0) {
+      await client.end();
+      return {
+        statusCode: 409, // 409 Conflict
+        body: JSON.stringify({ hata: 'Bu kullanıcı adı zaten kayıtlı.' })
+      };
+    }
+
+    // Ekleme işlemi:
     const result = await client.query(
       'INSERT INTO accounts (user_name, passwrd, name, surname, mail, phone_number) VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_name',
       [user_name, password, name, surname, mail, phone_number]
