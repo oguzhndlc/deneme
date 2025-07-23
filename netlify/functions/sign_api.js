@@ -74,7 +74,7 @@ exports.handler = async function(event) {
 );
 
     await client.query(
-  'INSERT INTO user_stats (user_name,level,money,classic_high_score,race_high_score,classic_gameplay,race_gameplay,eat_enemy) VALUES ($1, $2, $3)',
+  'INSERT INTO user_stats (user_name,level,money,classic_high_score,race_high_score,classic_gameplay,race_gameplay,eat_enemy) VALUES ($1, $2, $3,$4,$5,$6,$7,$8)',
   [user_name,0,0,0,0,0,0,0]
 );
 
