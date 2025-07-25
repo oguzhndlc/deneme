@@ -7,7 +7,7 @@ const pool = new Pool({
 
 exports.handler = async function(event, context) {
   try {
-    const result = await pool.query('SELECT id, user_name, passwrd FROM users ORDER BY id ASC');
+    const result = await pool.query('SELECT id, user_name, passwrd FROM accounts ORDER BY id ASC');
 
     return {
       statusCode: 200,
