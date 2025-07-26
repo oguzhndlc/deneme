@@ -12,7 +12,7 @@ exports.handler = async function(event, context) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ users: result.rows })   // Tüm kullanıcılar JSON dizisi olarak
+      body: JSON.stringify({ accounts: result.rows })   // Tüm kullanıcılar JSON dizisi olarak
     };
 
   } catch (err) {
