@@ -7,15 +7,26 @@ const pool = new Pool({
 
 exports.handler = async function(event, context) {
   try {
-    const result = await pool.query('SELECT * FROM deneme ORDER BY id ASC LIMIT 1');
+    const result = await pool.query('SELECT * FROM accounts ORDER BY id ASC');
+    const result = await pool.query('SELECT * FROM costumes ORDER BY id ASC');
+    const result = await pool.query('SELECT * FROM user_settings ORDER BY id ASC');
+    const result = await pool.query('SELECT * FROM user_stats ORDER BY id ASC');
+    const result = await pool.query('SELECT * FROM user_skins ORDER BY id ASC');
+
+
     return {
       statusCode: 200,
-      body: JSON.stringify(result.rows[0])
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accounts: result.rows })   // Tüm kullanıcılar JSON dizisi olarak
     };
+
   } catch (err) {
+    console.error('Veri tabanı hatası:', err.message);
+
     return {
       statusCode: 500,
-      body: JSON.stringify({ hata: err.message })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Veri tabanına bağlanırken hata oluştu.' })
     };
   }
 };
