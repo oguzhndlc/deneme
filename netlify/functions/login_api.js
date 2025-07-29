@@ -9,11 +9,11 @@ exports.handler = async function (event, context) {
     };
   }
 
-  let username, password;
+  let username, passwordBase64;
   try {
     const body = JSON.parse(event.body || '{}');
     username = body.username;
-    password = body.password;
+    passwordBase64 = body.password;
   } catch (err) {
     return {
       statusCode: 400,
@@ -21,10 +21,21 @@ exports.handler = async function (event, context) {
     };
   }
 
-  if (!username || !password) {
+  if (!username || !passwordBase64) {
     return {
       statusCode: 400,
       body: JSON.stringify({ success: false, message: 'Username and password required' }),
+    };
+  }
+
+  // Base64 decode
+  let password;
+  try {
+    password = Buffer.from(passwordBase64, 'base64').toString('utf-8');
+  } catch (err) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ success: false, message: 'Invalid base64 password' }),
     };
   }
 
@@ -50,7 +61,7 @@ exports.handler = async function (event, context) {
       };
     }
 
-    const hashedPassword = result.rows[0].password;
+    const hashedPassword = result.rows[0].passwrd;
 
     const passwordMatches = await bcrypt.compare(password, hashedPassword);
 
