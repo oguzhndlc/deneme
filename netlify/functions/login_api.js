@@ -73,7 +73,7 @@ exports.handler = async function (event, context) {
     } else {
       return {
         statusCode: 401,
-        body: JSON.stringify({ success: false, message: 'Invalid credentials' }),
+        body: JSON.stringify({ success: false, message: 'Kullanıcı adı ve ya şifrenizi kontrol edin' }),
       };
     }
   } catch (error) {
