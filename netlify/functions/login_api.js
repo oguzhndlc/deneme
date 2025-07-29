@@ -1,5 +1,4 @@
 const { Client } = require('pg');
-const bcrypt = require('bcryptjs');
 
 exports.handler = async function (event, context) {
   if (event.httpMethod !== 'POST') {
@@ -61,9 +60,10 @@ exports.handler = async function (event, context) {
       };
     }
 
-    const hashedPassword = result.rows[0].passwrd;
+    const storedPassword = result.rows[0].passwrd;
 
-    const passwordMatches = await bcrypt.compare(password, hashedPassword);
+    // bcrypt kontrolü iptal, basit eşitlik kontrolü
+    const passwordMatches = (password === storedPassword);
 
     if (passwordMatches) {
       return {
