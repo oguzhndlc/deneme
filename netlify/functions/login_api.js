@@ -1,7 +1,7 @@
 const { Client } = require('pg');
 const bcrypt = require('bcryptjs');
 
-exports.handler = async function(event, context) {
+exports.handler = async function (event, context) {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -9,12 +9,22 @@ exports.handler = async function(event, context) {
     };
   }
 
-  const { user_name, passwrd } = JSON.parse(event.body || '{}');
-
-  if (!user_name || !passwrd) {
+  let username, password;
+  try {
+    const body = JSON.parse(event.body || '{}');
+    username = body.username;
+    password = body.password;
+  } catch (err) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Username and password required' }),
+      body: JSON.stringify({ success: false, message: 'Invalid JSON body' }),
+    };
+  }
+
+  if (!username || !password) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ success: false, message: 'Username and password required' }),
     };
   }
 
@@ -26,7 +36,11 @@ exports.handler = async function(event, context) {
   try {
     await client.connect();
 
-    const result = await client.query('SELECT passwrd FROM accounts WHERE user_name = $1', [user_name]);
+    const result = await client.query(
+      'SELECT passwrd FROM accounts WHERE user_name = $1',
+      [username]
+    );
+
     await client.end();
 
     if (result.rows.length === 0) {
@@ -36,9 +50,9 @@ exports.handler = async function(event, context) {
       };
     }
 
-    const hashedPassword = result.rows[0]. passwrd;
+    const hashedPassword = result.rows[0].password;
 
-    const passwordMatches = await bcrypt.compare(passwrd, hashedPassword);
+    const passwordMatches = await bcrypt.compare(password, hashedPassword);
 
     if (passwordMatches) {
       return {
@@ -55,8 +69,7 @@ exports.handler = async function(event, context) {
     console.error('Login error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Internal server error' }),
+      body: JSON.stringify({ success: false, message: 'Internal server error' }),
     };
   }
 };
-
