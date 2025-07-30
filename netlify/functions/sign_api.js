@@ -64,8 +64,8 @@ exports.handler = async function(event) {
     );
 
     await client.query(
-  'INSERT INTO user_settings (user_name, music, sound) VALUES ($1, $2, $3)',
-  [user_name, true, true]
+  'INSERT INTO user_settings (user_name, music, sound,skin_select) VALUES ($1, $2, $3,$4)',
+  [user_name, true, true,0]
     );
 
     await client.query(
