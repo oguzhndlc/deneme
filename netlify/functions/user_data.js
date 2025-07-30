@@ -1,26 +1,28 @@
 const { Client } = require('pg');
 
 exports.handler = async function(event, context) {
-  // username'i hem GET query string hem de POST body'den alabilmek için
-  let username;
-
-  if (event.httpMethod === 'GET') {
-    const params = new URLSearchParams(event.queryStringParameters);
-    username = params.get('username') || 'oguzhndlc'; // Tarayıcıdan test için
-  } else if (event.httpMethod === 'POST') {
-    try {
-      const body = JSON.parse(event.body || '{}');
-      username = body.username || 'oguzhndlc';
-    } catch {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ success: false, message: 'Geçersiz JSON verisi' }),
-      };
-    }
-  } else {
+  if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: 'Sadece GET veya POST istekleri kabul edilir',
+      body: 'Sadece POST istekleri kabul edilir',
+    };
+  }
+
+  let username;
+  try {
+    const body = JSON.parse(event.body || '{}');
+    username = body.username;
+  } catch {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ success: false, message: 'Geçersiz JSON verisi' }),
+    };
+  }
+
+  if (!username) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ success: false, message: 'Kullanıcı adı gerekli' }),
     };
   }
 
@@ -32,7 +34,9 @@ exports.handler = async function(event, context) {
   try {
     await client.connect();
 
+    // Kullanıcı bilgileri (şifre hariç alınacak)
     const userRes = await client.query('SELECT * FROM accounts WHERE user_name = $1', [username]);
+
     if (userRes.rows.length === 0) {
       await client.end();
       return {
@@ -41,6 +45,7 @@ exports.handler = async function(event, context) {
       };
     }
 
+    // Diğer tablolar
     const settingsRes = await client.query('SELECT * FROM user_settings WHERE user_name = $1', [username]);
     const userskinsRes = await client.query('SELECT * FROM user_skins WHERE user_name = $1', [username]);
     const userstatsRes = await client.query('SELECT * FROM user_stats WHERE user_name = $1', [username]);
@@ -48,8 +53,9 @@ exports.handler = async function(event, context) {
 
     await client.end();
 
+    // Sonuçları birleştir
     const user = userRes.rows[0];
-    delete user.passwrd;
+    delete user.passwrd; // Şifreyi çıkart
 
     const result = {
       user,
