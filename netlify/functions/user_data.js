@@ -44,7 +44,7 @@ exports.handler = async function(event, context) {
     const settingsRes = await client.query('SELECT * FROM user_settings WHERE user_name = $1', [username]);
     const userskinsRes = await client.query('SELECT * FROM user_skins WHERE user_name = $1', [username]);
     const userstatsRes = await client.query('SELECT * FROM user_stats WHERE user_name = $1', [username]);
-    const costumesRes = await client.query('SELECT * FROM costumes WHERE user_name = $1', [username]);
+    const costumesRes = await client.query('SELECT * FROM costumes');
 
     await client.end();
 
