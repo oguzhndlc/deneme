@@ -56,7 +56,7 @@ exports.handler = async function(event, context) {
       userskins: userskinsRes.rows[0] || null,
       settings: settingsRes.rows[0] || null,
       userstats: userstatsRes.rows[0] || null,
-      costumes: costumesRes.rows[0] || null,
+      costumes: costumesRes.rows || null,
     };
 
     return {
