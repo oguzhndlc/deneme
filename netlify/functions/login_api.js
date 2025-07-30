@@ -4,7 +4,7 @@ exports.handler = async function (event, context) {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: 'Only POST requests allowed',
+      body: 'Sadece POST isteği kabul edilmektedir',
     };
   }
 
@@ -16,25 +16,25 @@ exports.handler = async function (event, context) {
   } catch (err) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ success: false, message: 'Invalid JSON body' }),
+      body: JSON.stringify({ success: false, message: 'Geçersiz JSON verisi' }),
     };
   }
 
   if (!username || !passwordBase64) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ success: false, message: 'Username and password required' }),
+      body: JSON.stringify({ success: false, message: 'Kullanıcı adı ve şifre gereklidir' }),
     };
   }
 
-  // Base64 decode
+  // Base64 çözme
   let password;
   try {
     password = Buffer.from(passwordBase64, 'base64').toString('utf-8');
   } catch (err) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ success: false, message: 'Invalid base64 password' }),
+      body: JSON.stringify({ success: false, message: 'Geçersiz base64 şifre' }),
     };
   }
 
@@ -56,13 +56,13 @@ exports.handler = async function (event, context) {
     if (result.rows.length === 0) {
       return {
         statusCode: 401,
-        body: JSON.stringify({ success: false, message: 'Invalid credentials' }),
+        body: JSON.stringify({ success: false, message: 'Bu kullanıcı adı mevcut değil' }),
       };
     }
 
     const storedPassword = result.rows[0].passwrd;
 
-    // bcrypt kontrolü iptal, basit eşitlik kontrolü
+    // Şifre kontrolü (şifre düz metin karşılaştırması)
     const passwordMatches = (password === storedPassword);
 
     if (passwordMatches) {
@@ -73,14 +73,15 @@ exports.handler = async function (event, context) {
     } else {
       return {
         statusCode: 401,
-        body: JSON.stringify({ success: false, message: 'Kullanıcı adı ve ya şifrenizi kontrol edin' }),
+        body: JSON.stringify({ success: false, message: 'Kullanıcı adı veya şifreniz yanlış' }),
       };
     }
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Giriş hatası:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ success: false, message: 'Internal server error' }),
+      body: JSON.stringify({ success: false, message: 'Sunucu hatası oluştu' }),
     };
   }
 };
+                           
